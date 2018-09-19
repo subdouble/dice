@@ -1,0 +1,114 @@
+.big-box{
+	display: flex;
+	float: left;
+	margin: 20px;
+	padding: 10px;
+	width: 200px;
+	height: 200px;
+	border-radius: 20px;
+	background: gainsboro;
+	box-shadow: 0 0 10px 5px rgba(0, 0, 0, .3);
+	justify-content: space-between;
+	
+}
+
+.box{
+	display: flex;
+	width: 60px;
+	flex-wrap: wrap;
+	justify-content: space-around;
+/*	justify-content: space-between;*/
+	align-items: center;
+}
+
+.circle{
+	width: 40px;
+	height: 40px;
+	background: black;
+	border-radius: 50%;
+}
+
+.sz-1 .box{
+	align-items: flex-start;
+}
+
+.sz-2 .box{
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.sz-3{
+	justify-content: space-around;
+}
+
+.sz-3 .box{
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.sz-4{
+	justify-content: flex-end;
+}
+
+.sz-4 .box{
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.sz-5{
+	justify-content: flex-start;
+}
+
+.sz-5 .box1{
+	align-items: flex-start;
+}
+
+.sz-6 .box1{
+	align-items: flex-start;
+}
+
+.sz-6 .box2{
+	align-items: flex-end;
+}
+
+.sz-7 .box1{
+	align-items: flex-start;
+}
+
+.sz-7 .box3{
+	align-items: flex-end;
+}
+
+.sz-8 .box{
+	align-items: flex-start;
+}
+
+.sz-8 .box3{
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.sz-9 .box{
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.sz-10 .box{
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.sz-12{
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.sz-12 .box{
+	width: 180px;
+	justify-content: space-between;
+	margin: auto;
+}
+
+.sz-12 .box2{
+	justify-content: center;
+}
