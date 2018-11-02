@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>random_circlee</title>
+    <style type="text/css">
+        .base-circle{
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin: auto;
+            width: 80px;
+            height: 80px;
+            -webkit-border-radius: 50%;
+            -moz-border-radius: 50%;
+            border-radius: 50%;
+            background: #f66;
+        }
+        .mask-circle{
+            width: 80px;
+            height: 80px;
+            -webkit-border-radius: 50%;
+            -moz-border-radius: 50%;
+            border-radius: 50%;
+            background: #f66;
+        }
+        div{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="base-circle">
+        <div class="mask-circle"></div>
+    </div>
+</body>
+<script type="text/javascript">
+    // 原始中心的圆
+    let baseCircle = document.querySelector(".base-circle");
+    // console.log(baseCircle);
+    // 原始中心圆局页面左边、顶部的距离
+    let baseCircleLeft = baseCircle.offsetLeft;
+    let baseCircleTop = baseCircle.offsetTop;
+    // 新圆颜色
+    let colorArr = ["00", "33", "66", "99", "cc", "ff"];
+    // 页面中圆的 Left Top 直径（宽度）
+    let circleArrAttributes = [{
+        circleLeft: 0,
+        circleTop: 0,
+        circleDiameter: 80
+    }];
+    // 新圆
+    let newCircle = null;
+    // 判读是否要插入圆
+    let addFlag = false;
+    // 判断是否插入完毕
+    let clickFlag = true;
+
+    baseCircle.onclick = function () {
+        if (clickFlag) {
+            clickFlag = false;
+
+            // 创建新圆
+            newCircle = document.createElement("div");
+            // 获取直径（宽度）
+            let newCircleDiameter = getRandomInt(30, 80);
+            // 获取 Left 和 Top （相对于原始中间的圆）
+            let newCircleLeft = getRandomInt(-baseCircleLeft, baseCircleLeft + 80 - newCircleDiameter);
+            let newCircleTop = getRandomInt(-baseCircleTop, baseCircleTop + 80 - newCircleDiameter);
+            // 获取新圆颜色
+            let newCircleColor = colorArr[getRandomInt(0, 5)];
+            newCircleColor += colorArr[getRandomInt(0, 5)];
+            newCircleColor += colorArr[getRandomInt(0, 5)];
+            // 新圆样式设置
+            newCircle.style.cssText =  `
+                position: absolute;
+                left: 0px;
+                top: 0px;
+                width: ${newCircleDiameter}px;
+                height: ${newCircleDiameter}px;
+                border-radius: 50%;
+                background: #${newCircleColor};
+                opacity: 0;
+                transition: all .5s;
+            `;
+            // 判断是否插入新圆
+            for (let i = 0; i < circleArrAttributes.length; i++) {
+                addFlag = check(circleArrAttributes[i], {
+                    circleLeft: newCircleLeft,
+                    circleTop: newCircleTop,
+                    circleDiameter: newCircleDiameter
+                });
+                if (addFlag === false) {
+                    break;
+                }
+            }
+
+            if (addFlag === true) {
+                // 插入新圆
+                baseCircle.appendChild(newCircle);
+
+                setTimeout(function () {
+                    // 设置新圆样式
+                    newCircle.style.opacity = `1`;
+                    newCircle.style.left = `${newCircleLeft}px`;
+                    newCircle.style.top = `${newCircleTop}px`;
+                    // newCircle.innerText = circleArrAttributes.length.toString();
+
+                    circleArrAttributes.push({
+                        circleLeft: newCircleLeft,
+                        circleTop: newCircleTop,
+                        circleDiameter: newCircleDiameter
+                    });
+
+                    //插入完毕
+                    clickFlag = true;
+                }, 50);
+            }
+            else {
+                clickFlag = true;
+            }
+        }
+    };
+
+    function getRandomInt(start, end) {
+        return Math.floor((Math.random() * (end - start + 1)) + start);
+    }
+
+    function check(oldCircleAttr, newCircleAttr) {
+        let oldLeft = oldCircleAttr.circleLeft;
+        let oldTop = oldCircleAttr.circleTop;
+        let oldDiameter = oldCircleAttr.circleDiameter;
+        let newLeft = newCircleAttr.circleLeft;
+        let newTop = newCircleAttr.circleTop;
+        let newDiameter = newCircleAttr.circleDiameter;
+
+        if (newLeft <= oldLeft) {
+            console.log("left");
+            if (oldLeft - newLeft >= newDiameter) {
+                return true;
+            }
+            else {
+                if (newTop <= oldTop) {
+                    if (oldTop - newTop >= newDiameter) {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+
+                }
+                else {
+                    if (newTop - oldTop >= oldDiameter) {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+            }
+        }
+        else {
+            console.log("right");
+            if (newLeft - oldLeft >= oldDiameter) {
+                return true;
+            }
+            else {
+                if (newTop <= oldTop) {
+                    if (oldTop - newTop >= newDiameter) {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+                else {
+                    if (newTop - oldTop >= oldDiameter) {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+
+            }
+        }
+    }
+</script>
+</html>

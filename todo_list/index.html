@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<title>to_do</title>
+		<link rel="stylesheet" type="text/css" href="css/swiper.min.css" />
+        <link rel="stylesheet" type="text/css" href="layui/css/layui.css"/>
+		<script src="js/rem.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/swiper.min.js" type="text/javascript" charset="utf-8"></script>
+		<style type="text/css">
+			* {
+				margin: 0;
+				padding: 0;
+			}
+
+			.swiper-container {
+				width: 100vw;
+				height: 30vh;
+			}
+
+			.swiper-slide {
+				line-height: 30vh;
+				text-align: center;
+				font-size: 1rem;
+				color: #fff;
+			}
+
+			.to-do-switch {
+				width: 100vw;
+				height: 10vh;
+				display: flex;
+				justify-content: space-between;
+                position: relative;
+                z-index: 10;
+			}
+
+			.to-do-switch>div {
+				width: 50%;
+				height: 100%;
+				background: #FF00FF;
+				position: relative;
+				font-size: 0.5rem;
+				line-height: 10vh;
+				text-align: center;
+                color: rgba(255, 255, 255, .8);
+			}
+            
+            .to-do-switch>div:last-child {
+                background: #C9C5C5;
+            }
+
+			/* .to-do-switch>div:first-child::after {
+				content: "";
+				position: absolute;
+				right: 0;
+				top: 0;
+				z-index: 1;
+				width: 0.01rem;
+				height: 100%;
+				background: #00F7DE;
+			} */
+
+			.add-item {
+				width: 100vw;
+				height: 10vh;
+				position: fixed;
+				bottom: 0;
+				background: red;
+				text-align: center;
+				line-height: 10vh;
+				font-size: 0.5rem;
+                color: rgba(255, 255, 255, .8);
+			}
+            
+            .to-do-list{
+                width: 100vw;
+                overflow: hidden;
+                font-size: 0.5rem;
+            }
+            .to-do-list>li{
+                width: 100%;
+                height: 10vh;
+                border-bottom: 0.01rem orange solid;
+                position: relative;
+                transition: all .3s;
+            }
+            .to-do-list p{
+                font-style: normal;
+                width: 80vw;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            .to-do-list>li time{
+                position: absolute;
+                right: 0.24rem;
+                bottom: 0.2rem;
+                font-size: 0.3rem;
+            }
+            .operation{
+                position: absolute;
+                right: -30vw;
+                top: 0;
+                width: 30vw;
+                height: 100%;
+                text-align: center;
+                line-height: 10vh;
+                background: red;
+                color: rgba(255, 255, 255, .8);
+                border-bottom: 0.01rem orange solid;
+            }
+            .to-do-con{
+                width: 100%;
+                height: 30vh;
+                padding: 0.1rem 0.2rem;
+                border: none;
+                font-size: 0.36rem;
+                word-break: break-all;
+            }
+            #to-do-wrapper{
+                width: 100vw;
+                height: 50vh;
+                position: relative;
+                top: 0;
+            }
+		</style>
+	</head>
+	<body>
+		<div class="swiper-container">
+			<div class="swiper-wrapper">
+				<div class="swiper-slide first" style="background: #FF0000;">1</div>
+				<div class="swiper-slide" style="background: #800080;">2</div>
+				<div class="swiper-slide" style="background: #EEEEEE;">3</div>
+				<div class="swiper-slide last" style="background: #FFA500;">4</div>
+			</div>
+			<div class="swiper-pagination"></div>
+		</div>
+		<div class="to-do-switch">
+			<div>未完成</div>
+			<div>已完成</div>
+		</div>
+        <div id="to-do-wrapper">
+            <ul class="to-do-list"></ul>
+        </div>
+		<div class="add-item">添加</div>
+	</body>
+    <script src="layui/layui.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/jquery-3.3.1.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="js/hammer.min.js" type="text/javascript" charset="utf-8"></script>
+    <script src="js/iScroll.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+        let toDoArr = [];
+        if(localStorage.toDoList !== undefined)
+        {
+            toDoArr = JSON.parse(localStorage.toDoList);
+            render()
+        }
+        
+		let mySwiper = new Swiper(".swiper-container", {
+			loop: true,
+			navigation: {
+				nextEl: ".swiper-button-next",
+				prevEl: ".swiper-button-prev"
+			},
+			pagination: {
+				el: '.swiper-pagination',
+			},
+			autoplay: true,
+		});
+
+        let layer;
+        let toDoItem;
+		$(".add-item").click(function() {
+			layui.use("layer", function() {
+				layer = layui.layer;
+				toDoItem = layer.open({
+					type: 1,
+                    area: "90vw",
+					content: '<textarea placeholder="请输入..." class="to-do-con" onkeydown="addToDoItem(event, this)"></textarea>'
+				});
+                $(".to-do-con").focus();
+			});
+		});
+        
+        // 滚动
+        let wrapper = document.getElementById("to-do-wrapper");
+        let myScroll = new IScroll(wrapper, {
+        	mouseWheel: true,
+        });
+        
+        $(".to-do-switch>div:first").click(function(){
+            $(this).css("background", "#FF00FF");
+            $(".to-do-switch>div:last").css("background", "#C9C5C5");
+            $(".to-do-list").html("");
+            render();
+            myScroll = new IScroll(wrapper, {
+            	mouseWheel: true,
+            });
+        });
+        
+        $(".to-do-switch>div:last").click(function(){
+        	$(this).css("background", "#FF00FF");
+        	$(".to-do-switch>div:first").css("background", "#C9C5C5");
+            $(".to-do-list").html("");
+            render("done");
+            myScroll = new IScroll(wrapper, {
+            	mouseWheel: true,
+            });
+        });
+        
+        // 滑动
+        let toDoList = document.querySelector(".to-do-list");
+        let hammertime = new Hammer(toDoList);
+        hammertime.on("panend", function(e){
+            if(!e.target.classList.contains("item"))
+            {
+                e.target = e.target.parentNode;
+            }
+            $(".to-do-list>li").each(function(index, val){
+                val.style.transform = "translateX(0)";
+            });
+            if(e.direction === 2){
+                e.target.style.transform = "translateX(-30vw)";
+            }
+            else{
+                e.target.style.transform = "translateX(0)";
+            }
+        });
+        
+        // 点击
+        hammertime.on("tap", function(e){
+            if(e.target.classList.contains("unfinished")){
+                e.target.classList.remove("unfinished");
+                e.target.classList.add("finished");
+                let id = e.target.id;
+                toDoArr[id].state = "done";
+                toDoList.innerHTML = "";
+                render();
+                myScroll = new IScroll(wrapper, {
+                	mouseWheel: true,
+                });
+                setData();
+            }
+            else if(e.target.classList.contains("finished")){
+                let id = e.target.id;
+                toDoArr.splice(id, 1);
+                toDoArr.forEach(function(val, index){
+                    val.id = index;
+                });
+                toDoList.innerHTML = "";
+                render("done");
+                myScroll = new IScroll(wrapper, {
+                	mouseWheel: true,
+                });
+                setData();
+            }
+        });
+        
+        
+        function addToDoItem(event, that){
+            if(event.keyCode === 13)
+            {
+                layer.close(toDoItem);
+                let time = getTime();
+                let id = toDoArr.length
+                let item = $("<li>").addClass("item").html(`
+                    <p>${that.value}</p>
+                    <time>${time}</time>
+                    <div id=${id} class="operation unfinished">完成</div>
+                `);
+                $(".to-do-list").append(item);
+                toDoArr.push({
+                    data: that.value,
+                    time: time,
+                    id: id,
+                    state: "undo"
+                });
+                setData();
+                myScroll = new IScroll(wrapper, {
+                	mouseWheel: true,
+                });
+            }
+        }
+        
+        function setData(){
+            localStorage.toDoList = JSON.stringify(toDoArr);
+        }
+        
+        function render(state = "undo"){
+            toDoArr.forEach(function(val, index){
+                if(val.state === state)
+                {
+                    let operation = state == "undo" ? "完成" : "删除";
+                    let isFinished = state == "undo" ? "unfinished" : "finished";
+                    let item = $("<li>").addClass("item").html(`
+                    	<p>${val.data}</p>
+                    	<time>${val.time}</time>
+                    	<div id=${val.id} class="operation ${isFinished}">${operation}</div>
+                    `);
+                    $(".to-do-list").append(item);
+                }
+            });
+        }
+        
+        function getTime(){
+        	let time = new Date();
+        	let year = time.getFullYear();
+        	let month = time.getMonth() + 1;
+        	let date = time.getDate();
+        	let hour = time.getHours();
+        	let minute = time.getMinutes();
+        	let second = time.getSeconds();
+        	return year + "/" + (month < 10 ? "0" + month : month) + "/" + (date < 10 ? "0" + date : date) + " " + (hour < 10 ? "0" + hour : hour) + ":" + (minute < 10 ? "0" + minute : minute) + ":" + (second < 10 ? "0" + second : second);
+        }
+	</script>
+</html>

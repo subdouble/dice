@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>random_circlee</title>
+    <style type="text/css">
+        .base-circle{
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin: auto;
+            width: 80px;
+            height: 80px;
+            -webkit-border-radius: 50%;
+            -moz-border-radius: 50%;
+            border-radius: 50%;
+            background: #f66;
+        }
+        .mask-circle{
+            width: 80px;
+            height: 80px;
+            -webkit-border-radius: 50%;
+            -moz-border-radius: 50%;
+            border-radius: 50%;
+            background: #f66;
+        }
+    </style>
+</head>
+<body>
+    <div class="base-circle">
+        <div class="mask-circle"></div>
+    </div>
+</body>
+<script type="text/javascript">
+    let baseCircle = document.querySelector(".base-circle");
+    console.log(baseCircle);
+    let baseCircleLeft = baseCircle.offsetLeft;
+    let baseCircleTop = baseCircle.offsetTop;
+    let colorArr = ["00", "33", "66", "99", "cc", "ff"];
+
+    baseCircle.onclick = function () {
+        let newCircle = document.createElement("div");
+        let newCircleDiameter = getRandomInt(10, 80);
+        let newCircleLeft = getRandomInt(-baseCircleLeft, baseCircleLeft + 80 - newCircleDiameter);
+        let newCircleTop = getRandomInt(-baseCircleTop, baseCircleTop + 80 - newCircleDiameter);
+        let newCircleColor = colorArr[getRandomInt(0, 5)];
+        newCircleColor += colorArr[getRandomInt(0, 5)];
+        newCircleColor += colorArr[getRandomInt(0, 5)];
+        newCircle.style.cssText =  `
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            width: ${newCircleDiameter}px;
+            height: ${newCircleDiameter}px;
+            border-radius: 50%;
+            background: #${newCircleColor};
+            opacity: 0;
+            transition: all .5s;
+        `;
+        setTimeout(function () {
+            newCircle.style.opacity = `1`;
+            newCircle.style.left = `${newCircleLeft}px`;
+            newCircle.style.top = `${newCircleTop}px`;
+        }, 50);
+        baseCircle.appendChild(newCircle);
+        console.log(newCircle);
+    };
+
+    function getRandomInt(start, end) {
+        return Math.floor((Math.random() * (end - start + 1)) + start);
+    }
+</script>
+</html>

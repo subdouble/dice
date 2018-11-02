@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>left-hide</title>
+		<style type="text/css">
+			.hide{
+				float: left;
+				width: 790px;
+				height: 470px;
+				overflow: hidden;
+			}
+			.left{
+				float: left;
+				width: 250px;
+				height: 470px;
+			}
+			.hide{
+				width: 0px;
+				transition: width 0.5s linear;
+			}
+			.big-box:hover .hide{
+				width: 790px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="big-box">
+			<div class="left">
+				<img src="img/banner-left.png"/>
+			</div>
+			<div class="hide">
+				<img src="img/banner-hide.png"/>
+			</div>
+		</div>
+	</body>
+</html>
