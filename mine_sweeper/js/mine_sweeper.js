@@ -88,9 +88,12 @@ function rightClick(box){
 }
 
 // 左键点击
-main.onclick = function(e){
-    // console.log(e.target);
-    leftClick(e.target);
+mainList.onclick = function(e){
+    console.log(e.target);
+    if(!e.target.classList.contains("main-list"))
+    {
+        leftClick(e.target);
+    }
     if(document.querySelectorAll(".known").length == (boxNum ** 2 - mineNum)){
         setTimeout(function(){
             alert("you win");
